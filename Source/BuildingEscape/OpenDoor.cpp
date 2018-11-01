@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OpenDoor.h"
-#include "Classes/Engine/World.h"
+#include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "TimerManager.h"
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -20,6 +21,7 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 
 	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+	DoorState = Closed;
 }
 
 // Called every frame
@@ -28,15 +30,41 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
-		OpenDoor();
+		if (DoorState == Closing)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(CloseDoorTimerHandle);
+		}
+		if (DoorState != Open)
+		{
+			DoorState = Open;
+			OpenDoor();
+		}
+	}
+	else
+	{
+		if (DoorState == Open)
+		{
+			DoorState = Closing;
+			GetWorld()->GetTimerManager().SetTimer(CloseDoorTimerHandle, this, &UOpenDoor::CloseDoor, CloseDelay, false);
+		}
 	}
 }
 
 void UOpenDoor::OpenDoor()
 {
-	AActor* Owner = GetOwner();
-	FRotator OldRotation = Owner->GetTransform().GetRotation().Rotator();
-	FRotator NewRotation = FRotator(OldRotation.Pitch, OpenAngle, OldRotation.Roll);
-	Owner->SetActorRotation(NewRotation);
+	SetDoorAngle(OpenAngle);
 }
 
+void UOpenDoor::CloseDoor()
+{
+	DoorState = Closed;
+	SetDoorAngle(CloseAngle);
+}
+
+void UOpenDoor::SetDoorAngle(float angle)
+{
+	AActor* Owner = GetOwner();
+	FRotator OldRotation = Owner->GetTransform().GetRotation().Rotator();
+	FRotator NewRotation = FRotator(OldRotation.Pitch, angle, OldRotation.Roll);
+	Owner->SetActorRotation(NewRotation);
+}
