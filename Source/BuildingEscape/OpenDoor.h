@@ -7,6 +7,8 @@
 #include "Engine/TriggerVolume.h"
 #include "OpenDoor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseRequest);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
@@ -30,21 +32,19 @@ public:
 		
 private:
 	UPROPERTY(EditAnywhere)
-		float OpenAngle = -170.0;
-
-	UPROPERTY(EditAnywhere)
-		float CloseAngle = -90.0;
-
-	UPROPERTY(EditAnywhere)
 		float CloseDelay = 2.0;
 
 	UPROPERTY(EditAnywhere)
 		ATriggerVolume* PressurePlate = nullptr;
 
+	UPROPERTY(BlueprintAssignable)
+		FOnOpenRequest OnOpenRequest;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnCloseRequest OnCloseRequest;
+
 	UPROPERTY(EditAnywhere)
 		float TotalMassRequiredToTrigger = 60.0;
-
-	void SetDoorAngle(float angle);
 
 	enum DOOR_STATE { Open, Closing, Closed };
 	DOOR_STATE DoorState;

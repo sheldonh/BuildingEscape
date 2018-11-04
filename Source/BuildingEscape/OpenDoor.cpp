@@ -42,12 +42,9 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		}
 		if (DoorState != Open)
 		{
-			DoorState = Open;
 			OpenDoor();
 		}
-	}
-	else
-	{
+	} else {
 		if (DoorState == Open)
 		{
 			DoorState = Closing;
@@ -74,19 +71,12 @@ float UOpenDoor::GetTotalMassOfActorsOnPressurePlate()
 
 void UOpenDoor::OpenDoor()
 {
-	SetDoorAngle(OpenAngle);
+	DoorState = Open;
+	OnOpenRequest.Broadcast();
 }
 
 void UOpenDoor::CloseDoor()
 {
 	DoorState = Closed;
-	SetDoorAngle(CloseAngle);
-}
-
-void UOpenDoor::SetDoorAngle(float angle)
-{
-	AActor* Owner = GetOwner();
-	FRotator OldRotation = Owner->GetTransform().GetRotation().Rotator();
-	FRotator NewRotation = FRotator(OldRotation.Pitch, angle, OldRotation.Roll);
-	Owner->SetActorRotation(NewRotation);
+	OnCloseRequest.Broadcast();
 }
