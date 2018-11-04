@@ -29,10 +29,20 @@ private:
 	
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	UInputComponent* Input = nullptr;
+	APlayerController* PlayerController = nullptr;
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
 
 	void FindPhysicsHandleComponent();
+	void FindPlayerController();
 	const FHitResult GetFirstPhysicsBodyInReach();
+	FVector GetReachLineEnd();
+	FVector GetReachLineStart();
+	void UpdatePlayerViewPoint();
+	FVector GetPlayerViewPointLocation();
+	FRotator GetPlayerViewPointRotation();
 	void Grab();
 	void Release();
 	void SetupInputComponent();
+
 };

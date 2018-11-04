@@ -15,13 +15,13 @@ UGrabber::UGrabber()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
 // Called when the game starts
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
 	FindPhysicsHandleComponent();
+	FindPlayerController();
 	SetupInputComponent();
 }
 
@@ -31,11 +31,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (PhysicsHandle->GrabbedComponent) {
-		FVector PlayerViewPointLocation;
-		FRotator PlayerViewPointRotation;
-		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
-		FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
-		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+		PhysicsHandle->SetTargetLocationAndRotation(GetReachLineEnd(), GetPlayerViewPointRotation());
 	}
 }
 
@@ -45,25 +41,26 @@ void UGrabber::FindPhysicsHandleComponent()
 	if (!PhysicsHandle) {
 		UE_LOG(LogTemp, Error, TEXT("No PhysicsHandle component found on %s"), *(GetOwner()->GetName()));
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("PhysicsHandle component found on %s"), *(GetOwner()->GetName()));
+}
+
+void UGrabber::FindPlayerController()
+{
+	PlayerController = GetWorld()->GetFirstPlayerController();
+	if (!PlayerController) {
+		UE_LOG(LogTemp, Error, TEXT("No PlayerController found in world"));
 	}
 }
 
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
-	FVector PlayerViewPointLocation;
-	FRotator PlayerViewPointRotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
-	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
-	FCollisionQueryParams TraceQueryParameters(FName(TEXT("")), false, GetOwner());
 	FHitResult Hit;
+
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT Hit,
-		PlayerViewPointLocation,
-		LineTraceEnd,
+		GetReachLineStart(),
+		GetReachLineEnd(),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
-		TraceQueryParameters
+		FCollisionQueryParams(FName(TEXT("")), false, GetOwner())
 	);
 
 	return Hit;
@@ -71,24 +68,49 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 
 void UGrabber::Grab()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab key pressed"));
-
-	// Try to reach an actor in PhysicsBody collision channel
 	FHitResult Hit = GetFirstPhysicsBodyInReach();
-
-	// If hit, attach physics handle
 	AActor* ActorHit = Hit.GetActor();
 	if (ActorHit) {
-		UE_LOG(LogTemp, Warning, TEXT("Grabbing %s"), *(ActorHit->GetName()));
 		UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
-		PhysicsHandle->GrabComponentAtLocationWithRotation(ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(), ComponentToGrab->GetOwner()->GetActorRotation());
+		PhysicsHandle->GrabComponentAtLocationWithRotation(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			GetPlayerViewPointRotation());
 	}
+}
+
+FVector UGrabber::GetReachLineEnd()
+{
+	return GetPlayerViewPointLocation() + GetPlayerViewPointRotation().Vector() * Reach;
+}
+
+FVector UGrabber::GetReachLineStart()
+{
+	return GetPlayerViewPointLocation();
+}
+
+void UGrabber::UpdatePlayerViewPoint()
+{
+	PlayerController->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+}
+
+FVector UGrabber::GetPlayerViewPointLocation()
+{
+	UpdatePlayerViewPoint();
+
+	return PlayerViewPointLocation;
+}
+
+FRotator UGrabber::GetPlayerViewPointRotation()
+{
+	UpdatePlayerViewPoint();
+
+	return PlayerViewPointRotation;
 }
 
 void UGrabber::Release()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab key released"));
-
 	PhysicsHandle->ReleaseComponent();
 }
 
@@ -97,9 +119,7 @@ void UGrabber::SetupInputComponent()
 	Input = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (!Input) {
 		UE_LOG(LogTemp, Error, TEXT("No Input component found on %s"), *(GetOwner()->GetName()));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Input component found on %s"), *(GetOwner()->GetName()));
+	} else {
 		Input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
 		Input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
 	}
