@@ -39,7 +39,7 @@ private:
 		float CloseDelay = 2.0;
 
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate;
+		ATriggerVolume* PressurePlate = nullptr;
 
 	UPROPERTY(EditAnywhere)
 		float TotalMassRequiredToTrigger = 60.0;

@@ -30,6 +30,8 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!PhysicsHandle) { return; }
+
 	if (PhysicsHandle->GrabbedComponent) {
 		PhysicsHandle->SetTargetLocationAndRotation(GetReachLineEnd(), GetPlayerViewPointRotation());
 	}
@@ -39,7 +41,7 @@ void UGrabber::FindPhysicsHandleComponent()
 {
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (!PhysicsHandle) {
-		UE_LOG(LogTemp, Error, TEXT("No PhysicsHandle component found on %s"), *(GetOwner()->GetName()));
+		UE_LOG(LogTemp, Error, TEXT("Missing PhysicsHandle on %s"), *(GetOwner()->GetName()));
 	}
 }
 
@@ -47,7 +49,7 @@ void UGrabber::FindPlayerController()
 {
 	PlayerController = GetWorld()->GetFirstPlayerController();
 	if (!PlayerController) {
-		UE_LOG(LogTemp, Error, TEXT("No PlayerController found in world"));
+		UE_LOG(LogTemp, Error, TEXT("Missing PlayerController on World"));
 	}
 }
 
@@ -68,6 +70,8 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 
 void UGrabber::Grab()
 {
+	if (!PhysicsHandle) { return; }
+
 	FHitResult Hit = GetFirstPhysicsBodyInReach();
 	AActor* ActorHit = Hit.GetActor();
 	if (ActorHit) {
@@ -92,6 +96,8 @@ FVector UGrabber::GetReachLineStart()
 
 void UGrabber::UpdatePlayerViewPoint()
 {
+	if (!PlayerController) { return; }
+
 	PlayerController->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
 }
 
@@ -111,16 +117,18 @@ FRotator UGrabber::GetPlayerViewPointRotation()
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) { return; }
+
 	PhysicsHandle->ReleaseComponent();
 }
 
 void UGrabber::SetupInputComponent()
 {
 	Input = GetOwner()->FindComponentByClass<UInputComponent>();
-	if (!Input) {
-		UE_LOG(LogTemp, Error, TEXT("No Input component found on %s"), *(GetOwner()->GetName()));
-	} else {
+	if (Input) {
 		Input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
 		Input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("Missing Input on %s"), *(GetOwner()->GetName()));
 	}
 }

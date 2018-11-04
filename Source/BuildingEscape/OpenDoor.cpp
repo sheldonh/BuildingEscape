@@ -24,6 +24,10 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 
 	DoorState = Closed;
+
+	if (!PressurePlate) {
+		UE_LOG(LogTemp, Error, TEXT("Missing PressurePlate on %s"), *GetOwner()->GetName());
+	}
 }
 
 // Called every frame
@@ -54,6 +58,8 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 float UOpenDoor::GetTotalMassOfActorsOnPressurePlate()
 {
+	if (!PressurePlate) { return 0.0; }
+
 	float TotalMass = 0.0;
 
 	TArray<AActor*> OverlappingActors;
