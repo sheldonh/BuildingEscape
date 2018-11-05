@@ -23,8 +23,6 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DoorState = Closed;
-
 	if (!PressurePlate) {
 		UE_LOG(LogTemp, Error, TEXT("Missing PressurePlate on %s"), *GetOwner()->GetName());
 	}
@@ -35,21 +33,10 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (GetTotalMassOfActorsOnPressurePlate() >= TotalMassRequiredToTrigger) {
-		if (DoorState == Closing)
-		{
-			GetWorld()->GetTimerManager().ClearTimer(CloseDoorTimerHandle);
-		}
-		if (DoorState != Open)
-		{
-			OpenDoor();
-		}
+	if (GetTotalMassOfActorsOnPressurePlate() >= TriggerMass) {
+		OnOpen.Broadcast();
 	} else {
-		if (DoorState == Open)
-		{
-			DoorState = Closing;
-			GetWorld()->GetTimerManager().SetTimer(CloseDoorTimerHandle, this, &UOpenDoor::CloseDoor, CloseDelay, false);
-		}
+		OnClose.Broadcast();
 	}
 }
 
@@ -67,16 +54,4 @@ float UOpenDoor::GetTotalMassOfActorsOnPressurePlate()
 	}
 
 	return TotalMass;
-}
-
-void UOpenDoor::OpenDoor()
-{
-	DoorState = Open;
-	OnOpenRequest.Broadcast();
-}
-
-void UOpenDoor::CloseDoor()
-{
-	DoorState = Closed;
-	OnCloseRequest.Broadcast();
 }
