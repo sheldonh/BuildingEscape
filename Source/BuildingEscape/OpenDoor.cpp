@@ -105,12 +105,14 @@ void UOpenDoor::SetLightColors()
 	for (const auto& DoorLight : DoorLights) {
 		if (Correct > 0) {
 			Correct--;
+			UE_LOG(LogTemp, Warning, TEXT("Setting DoorLight Color Green"));
 			DoorLight->SetColor(UDoorLight::Green);
-		}
-		else if (Useful > 0) {
+		} else if (Useful > 0) {
 			Useful--;
+			UE_LOG(LogTemp, Warning, TEXT("Setting DoorLight Color Amber"));
 			DoorLight->SetColor(UDoorLight::Amber);
 		} else {
+			UE_LOG(LogTemp, Warning, TEXT("Setting DoorLight Color Off"));
 			DoorLight->SetColor(UDoorLight::Off);
 		}
 	}

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Pedastal.h"
-#include "Statue.h"
 
 // Sets default values for this component's properties
 UPedastal::UPedastal()
@@ -31,9 +30,20 @@ void UPedastal::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// ...
 }
 
-bool UPedastal::IsAnyStatueMounted(TArray<int> StatueNumbers)
+bool UPedastal::IsAnyStatueMounted(TArray<int> StatueNumbers) // TODO rename to IsUsefulStatueMounted
 {
-	return StatueNumbers.Contains(CorrectStatueNumber);
+	bool UsefulStatueMounted = false;
+
+	for (const auto& Statue : GetMountedStatues()) {
+		for (const int StatueNumber : StatueNumbers) {
+			if (StatueNumber != CorrectStatueNumber && Statue->GetStatueNumber() == StatueNumber) {
+				UsefulStatueMounted = true;
+				break;
+			}
+		}
+	}
+
+	return UsefulStatueMounted;
 }
 
 bool UPedastal::IsCorrectStatueMounted()
@@ -42,10 +52,7 @@ bool UPedastal::IsCorrectStatueMounted()
 
 	bool IsCorrect = false;
 
-	TArray<AActor*> OverlappingActors;
-	GetOwner()->GetOverlappingActors(OUT OverlappingActors);
-	for (const auto& Actor : OverlappingActors) {
-		UStatue* Statue = Actor->FindComponentByClass<UStatue>();
+	for (const auto& Statue : GetMountedStatues()) {
 		if (Statue && Statue->GetStatueNumber() == CorrectStatueNumber) {
 			IsCorrect = true;
 			break;
@@ -58,6 +65,22 @@ bool UPedastal::IsCorrectStatueMounted()
 int UPedastal::GetCorrectStatueNumber()
 {
 	return CorrectStatueNumber;
+}
+
+TArray<UStatue*> UPedastal::GetMountedStatues()
+{
+	TArray<UStatue*> Statues;
+
+	TArray<AActor*> OverlappingActors;
+	GetOwner()->GetOverlappingActors(OUT OverlappingActors);
+	for (const auto& Actor : OverlappingActors) {
+		UStatue* Statue = Actor->FindComponentByClass<UStatue>();
+		if (Statue) {
+			Statues.Add(Statue);
+		}
+	}
+
+	return Statues;
 }
 
 

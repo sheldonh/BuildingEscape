@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerVolume.h"
+#include "Statue.h"
 #include "Pedastal.generated.h"
 
 
@@ -33,4 +34,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		int CorrectStatueNumber = -1;
+
+	TArray<UStatue*> GetMountedStatues();
 };
