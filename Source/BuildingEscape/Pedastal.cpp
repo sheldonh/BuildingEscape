@@ -31,6 +31,11 @@ void UPedastal::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// ...
 }
 
+bool UPedastal::IsAnyStatueMounted(TArray<int> StatueNumbers)
+{
+	return StatueNumbers.Contains(CorrectStatueNumber);
+}
+
 bool UPedastal::IsCorrectStatueMounted()
 {
 	if (CorrectStatueNumber < 0) { return false; }
@@ -49,4 +54,10 @@ bool UPedastal::IsCorrectStatueMounted()
 
 	return IsCorrect;
 }
+
+int UPedastal::GetCorrectStatueNumber()
+{
+	return CorrectStatueNumber;
+}
+
 

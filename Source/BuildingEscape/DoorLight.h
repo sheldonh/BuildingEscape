@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Engine/TriggerVolume.h"
-#include "Pedastal.generated.h"
+#include "Materials/MaterialInstance.h"
+#include "DoorLight.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BUILDINGESCAPE_API UPedastal : public UActorComponent
+class BUILDINGESCAPE_API UDoorLight : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UPedastal();
+	UDoorLight();
 
 protected:
 	// Called when the game starts
@@ -25,12 +25,21 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	bool IsAnyStatueMounted(TArray<int> StatueNumbers);
-	bool IsCorrectStatueMounted();
-	int GetCorrectStatueNumber();
+	enum DoorLightColor {
+		Off, Amber, Green
+	};
+
+	void SetColor(DoorLightColor color);
 
 private:
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* OffMaterial = nullptr;
+	
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* AmberMaterial = nullptr;
 
 	UPROPERTY(EditAnywhere)
-		int CorrectStatueNumber = -1;
+		class UMaterialInstance* GreenMaterial = nullptr;
+
+	bool HaveMaterials = false;
 };

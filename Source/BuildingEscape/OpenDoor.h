@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DoorLight.h"
 #include "Engine/TriggerVolume.h"
 #include "Pedastal.h"
 #include "OpenDoor.generated.h"
@@ -41,6 +42,8 @@ private:
 		FDoorEvent OnClose;
 
 	TArray<UPedastal*> Pedastals;
+	TArray<UDoorLight*> DoorLights;
 
 	bool AreAllPedastalsCorrectlyMounted();
+	void SetLightColors();
 };
