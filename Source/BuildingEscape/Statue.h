@@ -4,20 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Engine/TriggerVolume.h"
-#include "Pedastal.h"
-#include "OpenDoor.generated.h"
+#include "Statue.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorEvent);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
+class BUILDINGESCAPE_API UStatue : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UOpenDoor();
+	UStatue();
 
 protected:
 	// Called when the game starts
@@ -26,21 +23,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-		
+
+	int GetStatueNumber();
+
 private:
 	UPROPERTY(EditAnywhere)
-		TArray<AActor*> PedastalActors;
+		int StatueNumber = -1;
 
-	UPROPERTY(EditAnywhere)
-		TArray<AActor*> DoorLightActors;
-
-	UPROPERTY(BlueprintAssignable)
-		FDoorEvent OnOpen;
-
-	UPROPERTY(BlueprintAssignable)
-		FDoorEvent OnClose;
-
-	TArray<UPedastal*> Pedastals;
-
-	bool AreAllPedastalsCorrectlyMounted();
 };

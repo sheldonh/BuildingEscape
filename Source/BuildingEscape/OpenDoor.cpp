@@ -23,8 +23,17 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!PressurePlate) {
-		UE_LOG(LogTemp, Error, TEXT("Missing PressurePlate on %s"), *GetOwner()->GetName());
+	if (PedastalActors.Num() < 1) {
+		UE_LOG(LogTemp, Error, TEXT("Empty PedastalActors on %s"), *GetOwner()->GetName());
+	} else {
+		for (const auto& PedastalActor : PedastalActors) {
+			UPedastal* Pedastal = PedastalActor->FindComponentByClass<UPedastal>();
+			if (!Pedastal) {
+				UE_LOG(LogTemp, Error, TEXT("Missing Pedastal on PedastalActor %s in %s"), *PedastalActor->GetName(), *GetOwner()->GetName());
+			} else {
+				Pedastals.Add(Pedastal);
+			}
+		}
 	}
 }
 
@@ -33,25 +42,22 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (GetTotalMassOfActorsOnPressurePlate() >= TriggerMass) {
+	if (AreAllPedastalsCorrectlyMounted()) {
 		OnOpen.Broadcast();
 	} else {
 		OnClose.Broadcast();
 	}
 }
 
-float UOpenDoor::GetTotalMassOfActorsOnPressurePlate()
+bool UOpenDoor::AreAllPedastalsCorrectlyMounted()
 {
-	if (!PressurePlate) { return 0.0; }
+	bool AllCorrect = true;
 
-	float TotalMass = 0.0;
-
-	TArray<AActor*> OverlappingActors;
-	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
-	for (auto& Actor : OverlappingActors) {
-		auto PrimitiveComponent = Actor->FindComponentByClass<UPrimitiveComponent>();
-		TotalMass += PrimitiveComponent->GetMass();
+	for (const auto& Pedastal : Pedastals) {
+		if (!Pedastal->IsCorrectStatueMounted()) {
+			AllCorrect = false;
+		}
 	}
 
-	return TotalMass;
+	return AllCorrect;
 }
