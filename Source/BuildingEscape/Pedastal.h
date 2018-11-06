@@ -26,7 +26,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	bool IsAnyStatueMounted(TArray<int> StatueNumbers);
+	bool IsAnyStatueMounted();
+	bool IsUsefulStatueMounted(TArray<int> StatueNumbers);
 	bool IsCorrectStatueMounted();
 	int GetCorrectStatueNumber();
 

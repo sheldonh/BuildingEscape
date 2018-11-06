@@ -87,6 +87,7 @@ void UOpenDoor::SetLightColors()
 {
 	int Correct = 0;
 	int Useful = 0;
+	int StatuesMounted = 0;
 
 	// TODO Move to member
 	TArray<int> StatueNumbers;
@@ -95,24 +96,28 @@ void UOpenDoor::SetLightColors()
 	}
 
 	for (const auto& Pedastal : Pedastals) {
+		if (Pedastal->IsAnyStatueMounted()) {
+			StatuesMounted++;
+		}
 		if (Pedastal->IsCorrectStatueMounted()) {
 			Correct++;
-		} else if (Pedastal->IsAnyStatueMounted(StatueNumbers)) {
+		} else if (Pedastal->IsUsefulStatueMounted(StatueNumbers)) {
 			Useful++;
 		}
 	}
 
 	for (const auto& DoorLight : DoorLights) {
-		if (Correct > 0) {
+		if (StatuesMounted < StatueNumbers.Num()) {
+			DoorLight->SetColor(UDoorLight::Off);
+		} else if (Correct > 0) {
 			Correct--;
-			UE_LOG(LogTemp, Warning, TEXT("Setting DoorLight Color Green"));
 			DoorLight->SetColor(UDoorLight::Green);
 		} else if (Useful > 0) {
 			Useful--;
-			UE_LOG(LogTemp, Warning, TEXT("Setting DoorLight Color Amber"));
 			DoorLight->SetColor(UDoorLight::Amber);
-		} else {
-			UE_LOG(LogTemp, Warning, TEXT("Setting DoorLight Color Off"));
+		}
+		else {
+			Useful--;
 			DoorLight->SetColor(UDoorLight::Off);
 		}
 	}

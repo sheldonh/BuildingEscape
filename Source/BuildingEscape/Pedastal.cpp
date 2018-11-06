@@ -30,7 +30,13 @@ void UPedastal::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// ...
 }
 
-bool UPedastal::IsAnyStatueMounted(TArray<int> StatueNumbers) // TODO rename to IsUsefulStatueMounted
+bool UPedastal::IsAnyStatueMounted()
+{
+
+	return GetMountedStatues().Num() > 0;
+}
+
+bool UPedastal::IsUsefulStatueMounted(TArray<int> StatueNumbers) // TODO rename to IsUsefulStatueMounted
 {
 	bool UsefulStatueMounted = false;
 
