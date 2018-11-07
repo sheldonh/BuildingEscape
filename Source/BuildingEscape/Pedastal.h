@@ -26,15 +26,17 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UStatue* GetCorrectStatue();
 	bool IsAnyStatueMounted();
-	bool IsUsefulStatueMounted(TArray<int> StatueNumbers);
+	bool IsUsefulStatueMounted(TArray<UStatue*> UsefulStatues);
 	bool IsCorrectStatueMounted();
-	int GetCorrectStatueNumber();
 
 private:
 
 	UPROPERTY(EditAnywhere)
-		int CorrectStatueNumber = -1;
+		AActor* CorrectStatueActor = nullptr;
+
+	UStatue* CorrectStatue = nullptr;
 
 	TArray<UStatue*> GetMountedStatues();
 };

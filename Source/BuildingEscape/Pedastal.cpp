@@ -16,11 +16,15 @@ void UPedastal::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (CorrectStatueNumber < 0) {
-		UE_LOG(LogTemp, Error, TEXT("Missing CorrectStatueNumber on %s"), *GetOwner()->GetName());
+	if (!CorrectStatueActor) {
+		UE_LOG(LogTemp, Error, TEXT("Missing CorrectStatueActor on %s"), *GetOwner()->GetName());
+	} else {
+		CorrectStatue = CorrectStatueActor->FindComponentByClass<UStatue>();
+		if (!CorrectStatue) {
+			UE_LOG(LogTemp, Error, TEXT("Missing Statue component in %s on %s"), *CorrectStatueActor->GetName(), *GetOwner()->GetName());
+		}
 	}
 }
-
 
 // Called every frame
 void UPedastal::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -36,13 +40,15 @@ bool UPedastal::IsAnyStatueMounted()
 	return GetMountedStatues().Num() > 0;
 }
 
-bool UPedastal::IsUsefulStatueMounted(TArray<int> StatueNumbers) // TODO rename to IsUsefulStatueMounted
+bool UPedastal::IsUsefulStatueMounted(TArray<UStatue*> UsefulStatues)
 {
+	if (!CorrectStatue) { return false; }
+
 	bool UsefulStatueMounted = false;
 
-	for (const auto& Statue : GetMountedStatues()) {
-		for (const int StatueNumber : StatueNumbers) {
-			if (StatueNumber != CorrectStatueNumber && Statue->GetStatueNumber() == StatueNumber) {
+	for (const auto& MountedStatue : GetMountedStatues()) {
+		for (const auto& UsefulStatue : UsefulStatues) {
+			if (MountedStatue == UsefulStatue) {
 				UsefulStatueMounted = true;
 				break;
 			}
@@ -54,12 +60,12 @@ bool UPedastal::IsUsefulStatueMounted(TArray<int> StatueNumbers) // TODO rename 
 
 bool UPedastal::IsCorrectStatueMounted()
 {
-	if (CorrectStatueNumber < 0) { return false; }
+	if (!CorrectStatue) { return false; }
 
 	bool IsCorrect = false;
 
 	for (const auto& Statue : GetMountedStatues()) {
-		if (Statue && Statue->GetStatueNumber() == CorrectStatueNumber) {
+		if (Statue == CorrectStatue) {
 			IsCorrect = true;
 			break;
 		}
@@ -68,9 +74,9 @@ bool UPedastal::IsCorrectStatueMounted()
 	return IsCorrect;
 }
 
-int UPedastal::GetCorrectStatueNumber()
+UStatue* UPedastal::GetCorrectStatue()
 {
-	return CorrectStatueNumber;
+	return CorrectStatue;
 }
 
 TArray<UStatue*> UPedastal::GetMountedStatues()

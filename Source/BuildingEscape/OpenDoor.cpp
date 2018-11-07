@@ -90,9 +90,9 @@ void UOpenDoor::SetLightColors()
 	int StatuesMounted = 0;
 
 	// TODO Move to member
-	TArray<int> StatueNumbers;
+	TArray<UStatue*> UsefulStatues;
 	for (const auto& Pedastal : Pedastals) {
-		StatueNumbers.Add(Pedastal->GetCorrectStatueNumber());
+		UsefulStatues.Add(Pedastal->GetCorrectStatue());
 	}
 
 	for (const auto& Pedastal : Pedastals) {
@@ -101,13 +101,13 @@ void UOpenDoor::SetLightColors()
 		}
 		if (Pedastal->IsCorrectStatueMounted()) {
 			Correct++;
-		} else if (Pedastal->IsUsefulStatueMounted(StatueNumbers)) {
+		} else if (Pedastal->IsUsefulStatueMounted(UsefulStatues)) {
 			Useful++;
 		}
 	}
 
 	for (const auto& DoorLight : DoorLights) {
-		if (StatuesMounted < StatueNumbers.Num()) {
+		if (StatuesMounted < UsefulStatues.Num()) {
 			DoorLight->SetColor(UDoorLight::Off);
 		} else if (Correct > 0) {
 			Correct--;

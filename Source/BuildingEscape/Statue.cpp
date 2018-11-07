@@ -19,9 +19,6 @@ void UStatue::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (StatueNumber < 0) {
-		UE_LOG(LogTemp, Error, TEXT("Missing StatueNumber on %s"), *GetOwner()->GetName());
-	}
 }
 
 // Called every frame
@@ -30,10 +27,5 @@ void UStatue::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-}
-
-int UStatue::GetStatueNumber()
-{
-	return StatueNumber;
 }
 
