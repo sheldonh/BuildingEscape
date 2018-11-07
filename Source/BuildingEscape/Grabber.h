@@ -30,6 +30,8 @@ private:
 	UInputComponent* Input = nullptr;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	APlayerController* PlayerController = nullptr;
+
+	UPrimitiveComponent* GrabbedComponent = nullptr;
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
 
@@ -46,4 +48,5 @@ private:
 	void Release();
 	void SetupInputComponent();
 
+	void OnGrabKeyReleased();
 };

@@ -80,11 +80,11 @@ void UGrabber::Grab()
 	FHitResult Hit = GetFirstPhysicsBodyInReach();
 	AActor* ActorHit = Hit.GetActor();
 	if (ActorHit) {
-		UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
+		GrabbedComponent = Hit.GetComponent();
 		PhysicsHandle->GrabComponentAtLocationWithRotation(
-			ComponentToGrab,
+			GrabbedComponent,
 			NAME_None,
-			ComponentToGrab->GetOwner()->GetActorLocation(),
+			GrabbedComponent->GetOwner()->GetActorLocation(),
 			GetGrabRotation());
 	}
 }
@@ -130,15 +130,24 @@ void UGrabber::Release()
 		GrabbedComponent->SetAllPhysicsLinearVelocity(FVector::ZeroVector);
 	}
 	PhysicsHandle->ReleaseComponent();
+	GrabbedComponent = nullptr;
 }
 
 void UGrabber::SetupInputComponent()
 {
 	Input = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (Input) {
-		Input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
-		Input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+		Input->BindAction("Grab", IE_Released, this, &UGrabber::OnGrabKeyReleased);
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Missing Input on %s"), *(GetOwner()->GetName()));
+	}
+}
+
+void UGrabber::OnGrabKeyReleased()
+{
+	if (GrabbedComponent) {
+		Release();
+	} else {
+		Grab();
 	}
 }
