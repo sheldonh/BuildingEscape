@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Statue.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStatueEvent);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BUILDINGESCAPE_API UStatue : public UActorComponent
@@ -20,7 +21,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool Highlighted;
+
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -28,8 +32,10 @@ public:
 	void EnableHighlight();
 
 private:
-	/*
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool InGrabRange;
-		*/
+	UPROPERTY(BlueprintAssignable)
+		FStatueEvent OnEnableHighlight;
+
+	UPROPERTY(BlueprintAssignable)
+		FStatueEvent OnDisableHighlight;
+
 };
