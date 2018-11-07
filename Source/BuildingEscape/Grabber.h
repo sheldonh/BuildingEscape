@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Components/InputComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Statue.h"
 #include "Grabber.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -32,12 +33,15 @@ private:
 	APlayerController* PlayerController = nullptr;
 
 	UPrimitiveComponent* GrabbedComponent = nullptr;
+	UStatue* HighlightedStatue = nullptr;
+
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
 
 	void FindPhysicsHandleComponent();
 	void FindPlayerController();
 	const FHitResult GetFirstPhysicsBodyInReach();
+	UStatue* GetFirstStatueInReach();
 	FRotator GetGrabRotation();
 	FVector GetReachLineEnd();
 	FVector GetReachLineStart();

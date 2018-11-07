@@ -24,4 +24,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void DisableHighlight();
+	void EnableHighlight();
+
+private:
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool InGrabRange;
+		*/
 };

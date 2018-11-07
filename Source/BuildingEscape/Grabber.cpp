@@ -34,6 +34,33 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	if (PhysicsHandle->GrabbedComponent) {
 		PhysicsHandle->SetTargetLocationAndRotation(GetReachLineEnd(), GetGrabRotation());
+	} else {
+		UStatue* Statue = GetFirstStatueInReach();
+		if (Statue) {
+			if (!HighlightedStatue) {
+				Statue->EnableHighlight();
+				HighlightedStatue = Statue;
+			} else if (Statue != HighlightedStatue) {
+				HighlightedStatue->DisableHighlight();
+				Statue->EnableHighlight();
+				HighlightedStatue = Statue;
+			}
+		} else if (HighlightedStatue) {
+			HighlightedStatue->DisableHighlight();
+			HighlightedStatue = nullptr;
+		}
+	}
+}
+
+UStatue* UGrabber::GetFirstStatueInReach()
+{
+	FHitResult Hit = GetFirstPhysicsBodyInReach();
+	AActor* ActorHit = Hit.GetActor();
+	if (ActorHit) {
+		return ActorHit->FindComponentByClass<UStatue>();
+	}
+	else {
+		return nullptr;
 	}
 }
 

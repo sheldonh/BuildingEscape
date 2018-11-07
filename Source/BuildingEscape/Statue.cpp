@@ -29,3 +29,13 @@ void UStatue::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 	// ...
 }
 
+void UStatue::DisableHighlight()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Disabling highlight on %s"), *GetOwner()->GetName());
+}
+
+void UStatue::EnableHighlight()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Enabling highlight on %s"), *GetOwner()->GetName());
+}
+
