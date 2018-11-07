@@ -111,14 +111,14 @@ void UOpenDoor::SetLightColors()
 			DoorLight->SetColor(UDoorLight::Off);
 		} else if (Correct > 0) {
 			Correct--;
-			DoorLight->SetColor(UDoorLight::Green);
+			DoorLight->SetColor(UDoorLight::Correct);
 		} else if (Useful > 0) {
 			Useful--;
-			DoorLight->SetColor(UDoorLight::Amber);
+			DoorLight->SetColor(UDoorLight::Useful);
 		}
 		else {
 			Useful--;
-			DoorLight->SetColor(UDoorLight::Off);
+			DoorLight->SetColor(UDoorLight::Wrong);
 		}
 	}
 }

@@ -19,16 +19,16 @@ void UDoorLight::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (!OffMaterial) {
-		UE_LOG(LogTemp, Error, TEXT("Missing OffMaterial on %s"), *GetOwner()->GetName());
-	} else if (!AmberMaterial) {
-		UE_LOG(LogTemp, Error, TEXT("Missing AmberMaterial on %s"), *GetOwner()->GetName());
-	} else if (!GreenMaterial) {
-		UE_LOG(LogTemp, Error, TEXT("Missing GreenMaterial on %s"), *GetOwner()->GetName());
+	if (!WrongMaterial) {
+		UE_LOG(LogTemp, Error, TEXT("Missing WrongMaterial on %s"), *GetOwner()->GetName());
+	} else if (!UsefulMaterial) {
+		UE_LOG(LogTemp, Error, TEXT("Missing UsefulMaterial on %s"), *GetOwner()->GetName());
+	} else if (!CorrectMaterial) {
+		UE_LOG(LogTemp, Error, TEXT("Missing CorrectMaterial on %s"), *GetOwner()->GetName());
 	} else {
 		HaveMaterials = true;
 	}
-	SetColor(Off);
+	SetColor(Wrong);
 }
 
 // Called every frame
@@ -49,11 +49,14 @@ void UDoorLight::SetColor(DoorLightColor color)
 		case Off:
 			Mesh->SetMaterial(0, OffMaterial);
 			break;
-		case Amber:
-			Mesh->SetMaterial(0, AmberMaterial);
+		case Wrong:
+			Mesh->SetMaterial(0, WrongMaterial);
 			break;
-		case Green:
-			Mesh->SetMaterial(0, GreenMaterial);
+		case Useful:
+			Mesh->SetMaterial(0, UsefulMaterial);
+			break;
+		case Correct:
+			Mesh->SetMaterial(0, CorrectMaterial);
 			break;
 		}
 	}

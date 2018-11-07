@@ -26,7 +26,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	enum DoorLightColor {
-		Off, Amber, Green
+		Off, Wrong, Useful, Correct
 	};
 
 	void SetColor(DoorLightColor color);
@@ -34,12 +34,15 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 		class UMaterialInstance* OffMaterial = nullptr;
-	
-	UPROPERTY(EditAnywhere)
-		class UMaterialInstance* AmberMaterial = nullptr;
 
 	UPROPERTY(EditAnywhere)
-		class UMaterialInstance* GreenMaterial = nullptr;
+		class UMaterialInstance* WrongMaterial = nullptr;
+	
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* UsefulMaterial = nullptr;
+
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* CorrectMaterial = nullptr;
 
 	bool HaveMaterials = false;
 };
