@@ -27,8 +27,8 @@ private:
 	UPROPERTY(EditAnywhere)
 		float Reach = 100.0;
 	
-	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	UInputComponent* Input = nullptr;
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	APlayerController* PlayerController = nullptr;
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
@@ -36,6 +36,7 @@ private:
 	void FindPhysicsHandleComponent();
 	void FindPlayerController();
 	const FHitResult GetFirstPhysicsBodyInReach();
+	FRotator GetGrabRotation();
 	FVector GetReachLineEnd();
 	FVector GetReachLineStart();
 	void UpdatePlayerViewPoint();

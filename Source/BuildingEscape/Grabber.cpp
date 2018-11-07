@@ -33,7 +33,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	if (!PhysicsHandle) { return; }
 
 	if (PhysicsHandle->GrabbedComponent) {
-		PhysicsHandle->SetTargetLocationAndRotation(GetReachLineEnd(), GetPlayerViewPointRotation());
+		PhysicsHandle->SetTargetLocationAndRotation(GetReachLineEnd(), GetGrabRotation());
 	}
 }
 
@@ -68,6 +68,11 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	return Hit;
 }
 
+FRotator UGrabber::GetGrabRotation()
+{
+	return FRotator(0.0, GetPlayerViewPointRotation().Yaw, 0.0);
+}
+
 void UGrabber::Grab()
 {
 	if (!PhysicsHandle) { return; }
@@ -80,7 +85,7 @@ void UGrabber::Grab()
 			ComponentToGrab,
 			NAME_None,
 			ComponentToGrab->GetOwner()->GetActorLocation(),
-			GetPlayerViewPointRotation());
+			GetGrabRotation());
 	}
 }
 
@@ -119,6 +124,11 @@ void UGrabber::Release()
 {
 	if (!PhysicsHandle) { return; }
 
+	if (PhysicsHandle->GrabbedComponent) {
+		auto* GrabbedComponent = PhysicsHandle->GrabbedComponent;
+		GrabbedComponent->SetAllPhysicsAngularVelocity(FVector::ZeroVector);
+		GrabbedComponent->SetAllPhysicsLinearVelocity(FVector::ZeroVector);
+	}
 	PhysicsHandle->ReleaseComponent();
 }
 
