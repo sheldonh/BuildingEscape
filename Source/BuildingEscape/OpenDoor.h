@@ -10,6 +10,7 @@
 #include "OpenDoor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorLightEvent);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
@@ -42,10 +43,10 @@ private:
 		FDoorEvent OnClose;
 
 	UPROPERTY(BlueprintAssignable)
-		FDoorEvent OnChangeChimeCorrect;
+		FDoorLightEvent OnRight;
 
 	UPROPERTY(BlueprintAssignable)
-		FDoorEvent OnChangeChimeIncorrect;
+		FDoorLightEvent OnWrong;
 
 	TArray<UPedastal*> Pedastals;
 	TArray<UDoorLight*> DoorLights;
@@ -53,5 +54,13 @@ private:
 	bool AreAllPedastalsCorrectlyMounted();
 	void SetLightColors();
 
-	int LastStatuesMounted = 0;
+	int LastStatuesMounted = -1;
+
+	struct MountingAttempt {
+		int Correct;
+		int Useful;
+		bool IsUnlocked;
+	};
+
+	MountingAttempt LastMountingAttempt = { -1, -1, false };
 };

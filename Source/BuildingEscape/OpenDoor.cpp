@@ -25,7 +25,7 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 
 	if (PedastalActors.Num() < 1) {
-		UE_LOG(LogTemp, Warning, TEXT("Empty PedastalActors on %s"), *GetOwner()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("Empty PedastalActors on %s"), *GetOwner()->GetName());
 	} else {
 		for (const auto& PedastalActor : PedastalActors) {
 			UPedastal* Pedastal = PedastalActor->FindComponentByClass<UPedastal>();
@@ -106,15 +106,28 @@ void UOpenDoor::SetLightColors()
 		}
 	}
 
-	if (LastStatuesMounted != StatuesMounted) {
-		if (Correct == UsefulStatues.Num()) {
-			OnChangeChimeCorrect.Broadcast();
-		} else {
-			OnChangeChimeIncorrect.Broadcast();
+	if (StatuesMounted == UsefulStatues.Num()) {
+		if (LastMountingAttempt.Correct != Correct || LastMountingAttempt.Useful != Useful) {
+			if (Correct == UsefulStatues.Num()) {
+				OnRight.Broadcast();
+			} else {
+				OnWrong.Broadcast();
+			}
 		}
-	} else {
-		LastStatuesMounted = StatuesMounted;
+		LastMountingAttempt.Correct = Correct;
+		LastMountingAttempt.Useful = Useful;
 	}
+
+	/*
+	if (LastStatuesMounted != StatuesMounted && LastStatuesMounted != -1) {
+		if (Correct == UsefulStatues.Num()) {
+			OnRight.Broadcast();
+		} else {
+			OnWrong.Broadcast();
+		}
+	}
+	LastStatuesMounted = StatuesMounted;
+	*/
 
 	for (const auto& DoorLight : DoorLights) {
 		if (StatuesMounted < UsefulStatues.Num()) {
