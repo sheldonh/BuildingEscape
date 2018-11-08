@@ -41,9 +41,17 @@ private:
 	UPROPERTY(BlueprintAssignable)
 		FDoorEvent OnClose;
 
+	UPROPERTY(BlueprintAssignable)
+		FDoorEvent OnChangeChimeCorrect;
+
+	UPROPERTY(BlueprintAssignable)
+		FDoorEvent OnChangeChimeIncorrect;
+
 	TArray<UPedastal*> Pedastals;
 	TArray<UDoorLight*> DoorLights;
 
 	bool AreAllPedastalsCorrectlyMounted();
 	void SetLightColors();
+
+	int LastStatuesMounted = 0;
 };

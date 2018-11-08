@@ -106,6 +106,16 @@ void UOpenDoor::SetLightColors()
 		}
 	}
 
+	if (LastStatuesMounted != StatuesMounted) {
+		if (Correct == UsefulStatues.Num()) {
+			OnChangeChimeCorrect.Broadcast();
+		} else {
+			OnChangeChimeIncorrect.Broadcast();
+		}
+	} else {
+		LastStatuesMounted = StatuesMounted;
+	}
+
 	for (const auto& DoorLight : DoorLights) {
 		if (StatuesMounted < UsefulStatues.Num()) {
 			DoorLight->SetColor(UDoorLight::Off);
