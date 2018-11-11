@@ -31,10 +31,10 @@ public:
 		
 private:
 	UPROPERTY(EditAnywhere)
-		TArray<AActor*> PedastalActors;
+		TArray<AActor*> PedastalActors = TArray<AActor*>();
 
 	UPROPERTY(EditAnywhere)
-		TArray<AActor*> DoorLightActors;
+		TArray<AActor*> DoorLightActors = TArray<AActor*>();
 
 	UPROPERTY(BlueprintAssignable)
 		FDoorEvent OnOpen;

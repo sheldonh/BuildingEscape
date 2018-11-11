@@ -28,11 +28,16 @@ void UOpenDoor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Empty PedastalActors on %s"), *GetOwner()->GetName());
 	} else {
 		for (const auto& PedastalActor : PedastalActors) {
-			UPedastal* Pedastal = PedastalActor->FindComponentByClass<UPedastal>();
-			if (!Pedastal) {
-				UE_LOG(LogTemp, Error, TEXT("Missing Pedastal on PedastalActor %s in %s"), *PedastalActor->GetName(), *GetOwner()->GetName());
+			if (!PedastalActor) {
+				UE_LOG(LogTemp, Error, TEXT("null Pedastal in PedastalActors on %s"), *GetOwner()->GetName());
 			} else {
-				Pedastals.Add(Pedastal);
+				UPedastal* Pedastal = PedastalActor->FindComponentByClass<UPedastal>();
+				if (!Pedastal) {
+					UE_LOG(LogTemp, Error, TEXT("Missing Pedastal component in PedastalActor %s on %s"), *PedastalActor->GetName(), *GetOwner()->GetName());
+				}
+				else {
+					Pedastals.Add(Pedastal);
+				}
 			}
 		}
 	}
@@ -42,12 +47,16 @@ void UOpenDoor::BeginPlay()
 	}
 	else {
 		for (const auto& DoorLightActor : DoorLightActors) {
-			UDoorLight* DoorLight = DoorLightActor->FindComponentByClass<UDoorLight>();
-			if (!DoorLight) {
-				UE_LOG(LogTemp, Error, TEXT("Missing DoorLight on DoorLightActor %s in %s"), *DoorLightActor->GetName(), *GetOwner()->GetName());
-			}
-			else {
-				DoorLights.Add(DoorLight);
+			if (!DoorLightActor) {
+				UE_LOG(LogTemp, Error, TEXT("null DoorLight in DoorLightActors on %s"), *GetOwner()->GetName());
+			} else {
+				UDoorLight* DoorLight = DoorLightActor->FindComponentByClass<UDoorLight>();
+				if (!DoorLight) {
+					UE_LOG(LogTemp, Error, TEXT("Missing DoorLight component in DoorLightActor %s on %s"), *DoorLightActor->GetName(), *GetOwner()->GetName());
+				}
+				else {
+					DoorLights.Add(DoorLight);
+				}
 			}
 		}
 	}
